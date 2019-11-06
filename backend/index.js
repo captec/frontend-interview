@@ -75,6 +75,23 @@ express()
   })
 
   /**
+   * Modify a company
+   */
+  .patch('/companies/:company', (req, res) => {
+    const current = companies.find(({ _id }) => _id === req.params.company)
+
+    if (!current) {
+      return res.status(404).json({ message: 'Company not found' })
+    }
+
+    for (const prop in req.body) {
+      current[prop] = req.body[prop]
+    }
+
+    res.json(current)
+  })
+
+  /**
    * Return a company's contact user.
    */
   .get('/companies/:company/contact', (req, res) => {
