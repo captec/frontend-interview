@@ -10,6 +10,12 @@ const typeDefs = gql`
     company: Company!
   }
 
+  input UserInput {
+    name: String
+    email: String
+    phone: String
+  }
+
   type Company {
     _id: String!
     name: String!
@@ -18,11 +24,21 @@ const typeDefs = gql`
     contact: User!
   }
 
+  input CompanyInput {
+    name: String
+    website: String
+    numberOfEmployees: Int
+  }
+
   type Query {
     companies: [Company!]!
-    company (id: String!): Company
+    company(id: String!): Company
     users: [User!]!
-    user (id: String!): User
+    user(id: String!): User
+  }
+
+  type Mutation {
+    addCompany(company: CompanyInput!, contact: UserInput!): Company!
   }
 `
 
@@ -35,11 +51,40 @@ const resolvers = {
   },
 
   Company: {
-    contact: ({ contact }) => users.find(({ _id }) => _id === contact),
+    contact: ({ contact }) => users.find(({ _id }) => _id === contact)
   },
 
   User: {
     company: user => companies.find(({ _id }) => _id === user._id)
+  },
+
+  Mutation: {
+    addCompany: (root, { company, contact }) => {
+      if (companies.find(({ name }) => name === company.name)) {
+        throw new Error(`Company "${company.name}" already exists`)
+      }
+
+      if (
+        users.find(
+          user => user.name === contact.name || user.email === contact.email
+        )
+      ) {
+        throw new Error(`User "${contact.name}" already exists`)
+      }
+
+      const newUser = { _id: `${users.length}`, ...contact }
+
+      const newCompany = {
+        _id: `${companies.length}`,
+        ...company,
+        contact: newUser._id
+      }
+
+      users.push(newUser)
+      companies.push(newCompany)
+
+      return newCompany
+    }
   }
 }
 
