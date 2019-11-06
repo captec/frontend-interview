@@ -1,9 +1,12 @@
 const express = require('express')
+const bodyParser = require('body-parser')
 const { companies, users } = require('./database.json')
 
 const port = process.env.PORT || 3030
 
 express()
+  .use(bodyParser.json())
+
   /**
    * Check if API is running.
    */
@@ -25,6 +28,50 @@ express()
     }
 
     res.json(company)
+  })
+
+  /**
+   * Add a company.
+   */
+  .post('/companies', (req, res) => {
+    const { company, contact } = req.body
+
+    if (!company) {
+      return res.status(400).json({ message: 'Company parameter is required' })
+    }
+
+    if (companies.find(({ name }) => name === company.name)) {
+      return res
+        .status(400)
+        .json({ message: `Company "${company.name}" already exists` })
+    }
+
+    if (!contact) {
+      return res.status(400).json({ message: 'Contact parameter is required' })
+    }
+
+    if (
+      users.find(
+        ({ name, email }) => name === contact.name || email === contact.email
+      )
+    ) {
+      return res
+        .status(400)
+        .json({ message: `User "${contact.name}" already exists` })
+    }
+
+    const newUser = { _id: `${users.length}`, ...contact }
+
+    const newCompany = {
+      _id: `${companies.length}`,
+      ...company,
+      contact: newUser._id
+    }
+
+    users.push(newUser)
+    companies.push(newCompany)
+
+    res.json(newCompany)
   })
 
   /**
