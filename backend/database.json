@@ -1,0 +1,33 @@
+{
+  "companies": [
+    {
+      "_id": "1",
+      "name": "Google",
+      "website": "https://www.google.com/",
+      "numberOfEmployees": 98771,
+      "contact": "1"
+    },
+    {
+      "_id": "2",
+      "name": "Apple",
+      "website": "https://www.apple.com/",
+      "numberOfEmployees": 132000,
+      "contact": "2"
+    }
+  ],
+
+  "users": [
+    {
+      "_id": "1",
+      "name": "Sundar Pichai",
+      "email": "sundar@google.com",
+      "phone": "+1 202 555 0154"
+    },
+    {
+      "_id": "2",
+      "name": "Tim Cook",
+      "email": "tcook@apple.com",
+      "phone": "+1 202 555 0112"
+    }
+  ]
+}
