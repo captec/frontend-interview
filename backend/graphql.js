@@ -39,6 +39,7 @@ const typeDefs = gql`
 
   type Mutation {
     addCompany(company: CompanyInput!, contact: UserInput!): Company!
+    updateCompany(id: String!, company: CompanyInput): Company!
   }
 `
 
@@ -84,6 +85,20 @@ const resolvers = {
       companies.push(newCompany)
 
       return newCompany
+    },
+
+    updateCompany: (root, { id, company }) => {
+      const current = companies.find(({ _id }) => _id === id)
+
+      if (!current) {
+        throw new Error('Company not found')
+      }
+
+      for (const prop in company) {
+        current[prop] = company[prop]
+      }
+
+      return current
     }
   }
 }
